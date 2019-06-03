@@ -30,11 +30,11 @@ const ValidationError = {
     status: 422,
     data: {
       object: {
-        person_id: '1',
+        service_id: '1',
       },
       details: [
         {
-          message: 'person_id length must be at least 5 characters long',
+          message: 'service_id length must be at least 5 characters long',
           type: 'string.min',
         },
       ],

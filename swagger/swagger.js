@@ -1,4 +1,4 @@
-const { personPath, personsSchema } = require('../src/components/person/person.swagger');
+const { servicePath, servicesSchema } = require('../src/components/service/service.swagger');
 const { definitions } = require('../swagger/global.swagger');
 
 module.exports = {
@@ -10,13 +10,13 @@ module.exports = {
   },
   host: 'simple.api',
   paths: {
-    '/person': {
-      post: personPath.post,
-      get: personPath.get,
+    '/service': {
+      post: servicePath.post,
+      get: servicePath.get,
     },
   },
   definitions: {
     ...definitions,
-    ...personsSchema,
+    ...servicesSchema,
   },
 };

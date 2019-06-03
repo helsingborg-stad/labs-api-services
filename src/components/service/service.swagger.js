@@ -1,54 +1,54 @@
 const { stringWithLimit } = require('../../../swagger/global.swagger');
 
-const personsSchema = {
-  Person: {
+const servicesSchema = {
+  Service: {
     type: 'object',
     properties: {
       id: {
         required: true,
         type: 'integer',
       },
-      person_id: {
+      service_id: {
         required: true,
         ...stringWithLimit(5, 24),
       },
     },
     example: {
       id: 10,
-      person_id: 'john_snow',
+      service_id: 'john_snow',
     },
   },
 };
 
-const personPath = {
+const servicePath = {
   post: {
     tags: ['CRUD operations'],
-    description: 'Add a person',
-    summary: 'Add Person with Service id and User id',
-    operationId: 'addPerson',
+    description: 'Add a service',
+    summary: 'Add Service with Service id and User id',
+    operationId: 'addService',
     parameters: [
       {
         in: 'body',
         name: 'body',
-        description: 'The person to create.',
+        description: 'The service to create.',
         required: true,
         schema: {
           type: 'object',
           properties: {
-            person_id: {
+            service_id: {
               required: true,
               ...stringWithLimit(5, 24),
             },
           },
           example: {
-            person_id: 'john_snow',
+            service_id: 'john_snow',
           },
         },
       },
     ],
     responses: {
       200: {
-        description: 'Person created successfully.',
+        description: 'Service created successfully.',
       },
       422: {
         description: 'Validation Error',
@@ -60,14 +60,14 @@ const personPath = {
   },
   get: {
     tags: ['CRUD operations'],
-    summary: 'Query persons',
-    description: 'Query persons by Person id.',
-    operationId: 'queryPersons',
+    summary: 'Query services',
+    description: 'Query services by Service id.',
+    operationId: 'queryServices',
     parameters: [
       {
-        name: 'person_id',
+        name: 'service_id',
         in: 'query',
-        description: 'The user id of the person',
+        description: 'The user id of the service',
         type: 'string',
       },
       {
@@ -84,7 +84,7 @@ const personPath = {
         schema: {
           type: 'array',
           items: {
-            $ref: '#/definitions/Person',
+            $ref: '#/definitions/Service',
           },
         },
       },
@@ -99,6 +99,6 @@ const personPath = {
 };
 
 module.exports = {
-  personPath,
-  personsSchema,
+  servicePath,
+  servicesSchema,
 };
