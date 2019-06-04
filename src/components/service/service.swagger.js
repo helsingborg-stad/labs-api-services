@@ -162,6 +162,38 @@ const servicePath = {
       },
     },
   },
+  delete: {
+    tags: ['Service'],
+    summary: 'Remove a service',
+    description: 'Remove a service by the Service id.',
+    operationId: 'deleteServices',
+    parameters: [
+      {
+        name: 'service_id',
+        in: 'path',
+        description: 'The id of the service',
+        type: 'string',
+        required: true,
+      },
+    ],
+    responses: {
+      200: {
+        description: 'Service removed successfully.',
+        schema: {
+          type: 'array',
+          items: {
+            $ref: '#/definitions/Service',
+          },
+        },
+      },
+      422: {
+        description: 'Validation Error',
+        schema: {
+          $ref: '#/definitions/ValidationError',
+        },
+      },
+    },
+  },
 };
 
 module.exports = {

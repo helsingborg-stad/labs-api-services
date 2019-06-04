@@ -15,8 +15,9 @@ const query = async (params = {}) => {
     .limit(limit || 10);
 };
 
-const create = entity => Services()
-  .insert(entity);
+const remove = (service_id) => Services()
+  .where('service_id', service_id)
+  .del();
 
 const report = async (entity) => {
   const { service_name, service_level, service_status, service_path } = entity;
@@ -37,6 +38,6 @@ const report = async (entity) => {
 module.exports = {
   reset,
   query,
-  create,
+  remove,
   report,
 };

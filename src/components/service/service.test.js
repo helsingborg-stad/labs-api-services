@@ -213,4 +213,53 @@ describe('Service', () => {
       });
     requester.close();
   });
+
+  it('should correctly remove entity in db on DELETE at /:service_id when entity exists', async () => {
+    const requester = chai.request(server).keepOpen();
+
+    await requester
+      .post('/service/report')
+      .send({
+        service_id: 'iron_bank',
+        service_name: 'Iron Bank',
+        service_level: 2,
+        service_status: 200,
+        service_path: 'https://iron-bank:123'
+      });
+
+    await requester
+      .get('/service?service_id=iron_bank')
+      .send()
+      .then((res) => {
+        res.should.have.status(200);
+        res.should.be.json;
+        should.exist(res.body);
+        res.body[0].should.have.property('service_id');
+        res.body[0].service_id.should.equal('iron_bank');
+        res.body[0].should.have.property('service_name');
+        res.body[0].service_name.should.equal('Iron Bank');
+        res.body[0].should.have.property('service_level');
+        res.body[0].service_level.should.equal(2);
+        res.body[0].should.have.property('service_status');
+        res.body[0].service_status.should.equal(200);
+        res.body[0].should.have.property('service_path');
+        res.body[0].service_path.should.equal('https://iron-bank:123');
+        res.body[0].should.have.property('updated_at');
+      });
+
+    await requester
+      .delete('/service/iron_bank')
+      .send();
+
+    await requester
+      .get('/service?service_id=iron_bank')
+      .send()
+      .then((res) => {
+        res.should.have.status(200);
+        res.should.be.json;
+        should.exist(res.body);
+        res.body.length.should.equal(0);
+      });
+    requester.close();
+  });
 });

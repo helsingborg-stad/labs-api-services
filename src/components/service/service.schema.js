@@ -29,6 +29,10 @@ const querySchema = Joi.object().keys({
   limit,
 });
 
+const getSchema = Joi.object().keys({
+  service_id: id,
+});
+
 const responseSchema = Joi.object().keys({
   service_id: id.required(),
 });
@@ -36,6 +40,7 @@ const responseSchema = Joi.object().keys({
 module.exports = {
   genericSchema,
   querySchema,
+  getSchema,
   putSchema,
   postSchema,
   responseSchema,
