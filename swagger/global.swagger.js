@@ -5,6 +5,12 @@ const stringWithLimit = (min, max) => ({
   maxLength: max,
 });
 
+const integerWithLimit = (min, max) => ({
+  type: 'integer',
+  minimum: min,
+  maximum: max,
+});
+
 const date = () => ({
   type: 'string',
   format: 'date',
@@ -48,6 +54,7 @@ const definitions = {
 
 module.exports = {
   stringWithLimit,
+  integerWithLimit,
   date,
   definitions,
 };

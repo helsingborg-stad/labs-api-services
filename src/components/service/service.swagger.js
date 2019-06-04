@@ -1,4 +1,4 @@
-const { stringWithLimit } = require('../../../swagger/global.swagger');
+const { stringWithLimit, integerWithLimit, date } = require('../../../swagger/global.swagger');
 
 const servicesSchema = {
   Service: {
@@ -12,19 +12,43 @@ const servicesSchema = {
         required: true,
         ...stringWithLimit(5, 24),
       },
+      service_name: {
+        required: true,
+        ...stringWithLimit(5, 50),
+      },
+      service_path: {
+        required: true,
+        ...stringWithLimit(5, 500),
+      },
+      service_level: {
+        required: true,
+        ...integerWithLimit(0, 5),
+      },
+      service_status: {
+        required: true,
+        ...integerWithLimit(0, 500),
+      },
+      updated_at: {
+        required: true,
+        ...date(),
+      },
     },
     example: {
       id: 10,
-      service_id: 'john_snow',
+      service_id: 'iron_bank',
+      service_name: 'Iron Bank',
+      service_level: 2,
+      service_status: 200,
+      service_path: 'https://iron-bank:123'
     },
   },
 };
 
 const servicePath = {
   post: {
-    tags: ['CRUD operations'],
+    tags: ['Service'],
     description: 'Add a service',
-    summary: 'Add Service with Service id and User id',
+    summary: 'Add or update a service',
     operationId: 'addService',
     parameters: [
       {
@@ -39,16 +63,40 @@ const servicePath = {
               required: true,
               ...stringWithLimit(5, 24),
             },
+            service_name: {
+              required: true,
+              ...stringWithLimit(5, 50),
+            },
+            service_path: {
+              required: true,
+              ...stringWithLimit(5, 500),
+            },
+            service_level: {
+              required: true,
+              ...integerWithLimit(0, 5),
+            },
+            service_status: {
+              required: true,
+              ...integerWithLimit(0, 500),
+            },
+            updated_at: {
+              required: true,
+              ...date(),
+            },
           },
           example: {
-            service_id: 'john_snow',
+            service_id: 'iron_bank',
+            service_name: 'Iron Bank',
+            service_level: 2,
+            service_status: 200,
+            service_path: 'https://iron-bank:123'
           },
         },
       },
     ],
     responses: {
       200: {
-        description: 'Service created successfully.',
+        description: 'Service reported successfully.',
       },
       422: {
         description: 'Validation Error',
@@ -59,7 +107,7 @@ const servicePath = {
     },
   },
   get: {
-    tags: ['CRUD operations'],
+    tags: ['Service'],
     summary: 'Query services',
     description: 'Query services by Service id.',
     operationId: 'queryServices',
@@ -67,8 +115,26 @@ const servicePath = {
       {
         name: 'service_id',
         in: 'query',
-        description: 'The user id of the service',
+        description: 'The id of the service',
         type: 'string',
+      },
+      {
+        name: 'service_name',
+        in: 'query',
+        description: 'The name of the service',
+        type: 'string',
+      },
+      {
+        name: 'service_level',
+        in: 'query',
+        description: 'The level of the service',
+        type: 'integer',
+      },
+      {
+        name: 'service_status',
+        in: 'query',
+        description: 'The status of the service',
+        type: 'integer',
       },
       {
         name: 'limit',
@@ -80,7 +146,7 @@ const servicePath = {
     ],
     responses: {
       200: {
-        description: 'successful operation',
+        description: 'Query Successfull',
         schema: {
           type: 'array',
           items: {
