@@ -15,21 +15,29 @@ const query = async (params = {}) => {
     .limit(limit || 10);
 };
 
-const create = entity => Services()
-  .insert(entity);
+const remove = (service_id) => Services()
+  .where('service_id', service_id)
+  .del();
 
 const report = async (entity) => {
-  const { service_id } = entity;
+  const { service_name, service_level, service_status, service_path } = entity;
+  const insert = Services()
+    .insert(entity)
+    .toString();
 
-  return client.raw(
-    'INSERT INTO ?? (`service_id`) values (?) ON DUPLICATE KEY UPDATE `updated_at` = now()',
-    [TABLE_NAME, service_id],
-  );
+  const update = client
+    .raw(
+      '`updated_at` = now(), `service_name` = ?, `service_level` = ?, `service_status` = ?, `service_path` = ?',
+      [service_name, service_level, service_status, service_path]
+    )
+    .toString();
+
+  return client.raw(`${insert} ON DUPLICATE KEY UPDATE ${update}`);
 }
 
 module.exports = {
   reset,
   query,
-  create,
+  remove,
   report,
 };

@@ -11,8 +11,7 @@ module.exports = {
   host: 'simple.api',
   paths: {
     '/service': {
-      post: servicePath.post,
-      get: servicePath.get,
+      ...servicePath
     },
   },
   definitions: {

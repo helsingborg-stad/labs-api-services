@@ -1,7 +1,8 @@
 const express = require('express');
 const Services = require('./service.db');
-const { postSchema, querySchema } = require('./service.schema');
+const { postSchema, querySchema, getSchema } = require('./service.schema');
 const Validator = require('../..//middlewares/validator.middleware');
+const logger = require('../../utils/logger');
 
 const routes = () => {
   const router = express.Router();
@@ -13,6 +14,7 @@ const routes = () => {
 
       return res.json(result);
     } catch (err) {
+      logger.error(err.message);
       // Send back error in json.
       return res.status(err.status || 500).json(err);
     }
@@ -25,7 +27,19 @@ const routes = () => {
 
       return res.send('Service reported successfully.');
     } catch (err) {
-      console.log(err)
+      logger.error(err.message);
+      return res.status(err.status || 500).json(err);
+    }
+  });
+
+  router.delete('/:service_id', Validator(getSchema, 'params', true), async (req, res) => {
+    try {
+      const { service_id } = req.params;
+      await Services.remove(service_id);
+
+      return res.send('Service removed successfully.');
+    } catch (err) {
+      logger.error(err.message);
       return res.status(err.status || 500).json(err);
     }
   });
