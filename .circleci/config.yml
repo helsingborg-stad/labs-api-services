@@ -1,0 +1,141 @@
+# Helsingborg Stad CircleCI Build Config
+#
+# Supported Build process: Dockerized NodeJS Apps deployed on Heroku
+#
+# -- TESTS --
+#
+# This build config will make a basic warmup of the docker. It's up
+# to the application itself to run the required tests to validate
+# the functionality. This build will fail if any error message is thrown.
+#
+# -- SETUP --
+# You need to get the following steps done before this build will complete.
+#
+# 1. Create a git repository.
+# 2. Link the git repository to circle ci
+# 3. Create a container name on dockerhub
+# 4. Create a heroku container repository
+# 5. Run the build
+# 6. Make a manual web relese on heroku
+#
+# More detailed information on how to complete this and enviroment
+# variables can be found in internal confluence documentation.
+#
+# -- REQUIRED ENVIROMENT VARIABLES [CIRCLE CI] --
+#
+# DOCKERHUB_LOGIN       Username on dockerhub [Found in confluence]
+# DOCKERHUB_PASSWORD    Password on dockerhub [Found in confluence]
+#
+# HEROKU_API_KEY        General API code [Generated in Heroku admin]
+# HEROKU_APP_NAME       The name of the application in Heroku
+#
+# IMAGE_NAME            The name of the image on docker hub, circleci and github.
+#
+# -- AUTHORS --
+#
+# Sebastian Thulin (sebastian.thulin@helsingborg.se)
+#
+version: 2.1
+executors:
+  docker-publisher:
+    docker:
+      - image: circleci/buildpack-deps:stretch
+
+jobs:
+  build:
+    executor: docker-publisher
+    steps:
+      - checkout
+      - setup_remote_docker
+
+      - run:
+          name: Build Docker image
+          command: |
+            docker build -t $IMAGE_NAME:latest .
+
+      - run:
+          name: Archive Docker image
+          command: docker save -o image.tar $IMAGE_NAME
+
+      - persist_to_workspace:
+          root: .
+          paths:
+            - ./image.tar
+
+  publish-latest:
+    executor: docker-publisher
+    steps:
+      - attach_workspace:
+          at: /tmp/workspace
+      - setup_remote_docker
+
+      - run:
+          name: Load archived Docker image
+          command: docker load -i /tmp/workspace/image.tar
+
+      - run:
+          name: Publish Docker Image to Docker Hub
+          command: |
+            docker login -u $DOCKERHUB_LOGIN -p $DOCKERHUB_PASSWORD
+            IMAGE_TAG="0.0.${CIRCLE_BUILD_NUM}"
+            docker tag $IMAGE_NAME:latest $IMAGE_NAME:$IMAGE_TAG
+            docker push $IMAGE_NAME:latest
+            docker push $IMAGE_NAME:$IMAGE_TAG
+
+      - run:
+          name: Deploy to Heroku registry
+          command: |
+            docker login --username=_ --password=$HEROKU_API_KEY registry.heroku.com
+            docker tag $IMAGE_NAME registry.heroku.com/$HEROKU_APP_NAME/web
+            docker push registry.heroku.com/$HEROKU_APP_NAME/web
+
+  publish-tag:
+    executor: docker-publisher
+    steps:
+      - attach_workspace:
+          at: /tmp/workspace
+      - setup_remote_docker
+
+      - run:
+          name: Load archived Docker image
+          command: docker load -i /tmp/workspace/image.tar
+
+      - run:
+          name: Publish Docker Image to Docker Hub
+          command: |
+            docker login -u $DOCKERHUB_LOGIN -p $DOCKERHUB_PASSWORD
+            IMAGE_TAG=${CIRCLE_TAG/v/''}
+            docker tag $IMAGE_NAME:latest $IMAGE_NAME:$IMAGE_TAG
+            docker push $IMAGE_NAME:latest
+            docker push $IMAGE_NAME:$IMAGE_TAG
+
+workflows:
+  version: 2
+  build-master:
+    jobs:
+      - build:
+          filters:
+            branches:
+              only: master
+      - publish-latest:
+          requires:
+            - build
+          filters:
+            branches:
+              only: master
+  build-tags:
+    jobs:
+      - build:
+          filters:
+            tags:
+              only: /^v.*/
+            branches:
+              ignore: /.*/
+      - publish-tag:
+          requires:
+            - build
+          filters:
+            tags:
+              only: /^v.*/
+            branches:
+              ignore: /.*/
