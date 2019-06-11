@@ -43,7 +43,7 @@ jobs:
       - setup_remote_docker
 
       - run:
-          name: Build Docker image
+          name: Build Docker image of $CIRCLE_BRANCH
           command: |
             docker build -t $IMAGE_NAME:latest .
 
