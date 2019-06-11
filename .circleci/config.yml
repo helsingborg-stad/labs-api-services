@@ -43,9 +43,9 @@ jobs:
       - setup_remote_docker
 
       - run:
-          name: Data ourput
+          name: Data output
           command: |
-            echo $CIRCLE_BRANCH
+            echo $CIRCLE_PROJECT_REPONAME
 
       - run:
           name: Build Docker image
