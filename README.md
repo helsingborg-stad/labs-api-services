@@ -1,8 +1,5 @@
-# labs-node-js-boilerplate
-Boilerplate repository for nodejs based LABS projects.
-
-This boilerplats is built on nodejs and express. It includes an example that showcases
-everything from how the app is set up to routing and validation.
+# labs-api-services
+Api for storing and exposing services; 
 
 ## Development
 Prerequisite: local MySQL server running
@@ -11,7 +8,7 @@ Prerequisite: local MySQL server running
 2. Install dependencies with npm install
 3. Create .env-file in the root folder with these properties
 ````
-   PORT=3000 #(or any other port you prefer)
+   PORT=3002 #(or any other port you prefer)
    LOG_LEVEL=info #(trace, debug, info, warn, error, fatal, silent)
 ````
 4. run ```npm run migrate:latest``` (this will migrate your mysql schemas to the latest version)
@@ -19,7 +16,20 @@ Prerequisite: local MySQL server running
 
 ## Documentation
 
-Documentation for apis built from this boilerplate should be split into two sections. Project related information should be written in the README-file for the repository, and specific instructions for calling the api should be documented with Swagger which is included in the project by default.
+Documentation for apis built from this applications should be split into two sections. Project related information should be written in the README-file for the repository, and specific instructions for calling the api should be documented with Swagger which is included in the project by default.
+
+## Swagger
+
+Swagger is a set of open-source tools built around the OpenAPI Specification that can help you design, build, document and consume REST APIs. The Swagger tools include in this project is:
+
+**Swagger UI**
+
+Swagger UI allows anyone — be it the development team or the end consumers — to visualize and interact with the API’s resources without having any of the implementation logic in place. 
+It’s automatically generated from your OpenAPI (formerly known as Swagger) Specification, with the visual documentation making it easy for back end implementation and client side consumption.
+
+The Swagger document can be accessed with the following URLs (whenever the server is running) :  
+http://localhost:3002/api-docs
+
 
 ### Tests
 
